@@ -180,8 +180,6 @@ local function hudPaint()
   surface.SetDrawColor(50, 50, 50, 240)
   surface.DrawRect(padding, ScrH() - (hudY + padding), hudX, hudY)
 
-  -- surface.SetDrawColor(75, 75, 75, 125)
-  -- surface.DrawRect(padding, ScrH() - (hudY + padding), 200, hudY - 05)
 
   if (!Avatar) then
     Avatar = vgui.Create( "AvatarImage", Panel )
@@ -193,8 +191,8 @@ local function hudPaint()
   end
 
 
-  -- surface.SetDrawColor(255, 255, 255, 25)
-  surface.SetDrawColor(88, 40, 238, 125)
+  surface.SetDrawColor(255, 255, 255, 25)
+  -- surface.SetDrawColor(88, 40, 238, 125)
   surface.DrawRect(padding, ScrH() - hudY - 5, 100, 100)
 
   surface.DrawRect(padding + 100, ScrH() - (hudY + padding), hudX - 100, 30)
@@ -259,7 +257,7 @@ local function hudPaint()
   else
     surface.SetDrawColor(0, 0, 0, 125)
   end
-  surface.DrawTexturedRect(padding + 10, ScrH() - (hudY + padding - 175), 32, 32)
+  surface.DrawTexturedRect(padding + 105, ScrH() - (hudY + padding - 115), 32, 32)
 
 end
 
