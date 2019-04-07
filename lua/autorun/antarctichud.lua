@@ -180,76 +180,76 @@ local function hudPaint()
   surface.SetDrawColor(50, 50, 50, 240)
   surface.DrawRect(padding, ScrH() - (hudY + padding), hudX, hudY)
 
-  surface.SetDrawColor(75, 75, 75, 125)
-  surface.DrawRect(padding, ScrH() - (hudY + padding), 200, hudY - 05)
+  -- surface.SetDrawColor(75, 75, 75, 125)
+  -- surface.DrawRect(padding, ScrH() - (hudY + padding), 200, hudY - 05)
 
-  -- if (!Avatar) then
-  --   Avatar = vgui.Create( "AvatarImage", Panel )
-  --   if (player:IsValid() && IsValid(Avatar)) then
-  --     Avatar:SetSize( 90, 90 )
-  --     Avatar:SetPos( (padding + 7.5 + 45 + 5), ScrH() - (hudY + 42.5 - 5) - 2.5 )
-  --     Avatar:SetPlayer( player, 90 )
-  --   end
-  -- end
+  if (!Avatar) then
+    Avatar = vgui.Create( "AvatarImage", Panel )
+    if (player:IsValid() && IsValid(Avatar)) then
+      Avatar:SetSize( 90, 90 )
+      Avatar:SetPos( padding + 5, ScrH() - hudY )
+      Avatar:SetPlayer( player, 90 )
+    end
+  end
 
 
-  -- surface.SetDrawColor(237, 20, 91, 255)
-  surface.SetDrawColor(88, 40, 238, 255)
+  -- surface.SetDrawColor(255, 255, 255, 25)
+  surface.SetDrawColor(88, 40, 238, 125)
   surface.DrawRect(padding, ScrH() - hudY - 5, 100, 100)
 
-  surface.DrawRect(padding + 105, ScrH() - (hudY + padding) + 5, hudX - 210, 25)
+  surface.DrawRect(padding + 100, ScrH() - (hudY + padding), hudX - 100, 30)
 
-  draw.DrawText(name, "OswaldRP", padding + 210, ScrH() - (hudY + padding), Color(255,255,255,255), 0)
+  draw.DrawText(name, "OswaldRP", padding + 105, ScrH() - (hudY + padding) + 2, Color(255, 255, 255, 255), 0)
 
   if (job) then
-    draw.DrawText(job:upper(), "OswaldRP", padding + 45.5 + 5, ScrH() - (hudY + padding - 70), Color(255,255,255,255), 1)
+    draw.DrawText(job:upper(), "OswaldRP", padding + 45.5 + 5, ScrH() - (hudY + padding - 115), Color(255,255,255,255), 1)
   end
   if (salary) then
-    draw.DrawText(currency .. salary, "OswaldRP", padding + 167.5 + 5, ScrH() - (hudY + padding - 70), Color(255,255,255,255), 1)
+    draw.DrawText(currency .. salary, "OswaldRP", padding + 45.5 + 5, ScrH() - (hudY + padding - 155), Color(255,255,255,255), 1)
   end
 
   --  health Bar
   surface.SetDrawColor(0, 0, 0, 125)
-  surface.DrawRect(padding + 228, ScrH() - (hudY + padding - 47), hudX - 230 - 5, 28)
+  surface.DrawRect(padding + 123, ScrH() - (hudY + padding - 37), hudX - 123 - 5, 28)
 
   surface.SetDrawColor(197, 0, 51, 255)
-  surface.DrawRect(padding + 228, ScrH() - (hudY + padding - 48), (hudX - 230 - 5) * (math.Clamp(health, 0, 100) / 100), 26)
+  surface.DrawRect(padding + 123, ScrH() - (hudY + padding - 38), (hudX - 123 - 5) * (math.Clamp(health, 0, 100) / 100), 26)
 
-  surface.SetMaterial(health > 0 and Icons['heart'] or Icons['heart-broken'])
+  surface.SetMaterial(player:Health() > 0 and Icons['heart'] or Icons['heart-broken'])
   surface.SetDrawColor(237 - (heartBeat * 30), 20, 91, 255)
-  surface.DrawTexturedRect(padding + 210 - (heartBeat / 2), ScrH() - (hudY + padding - 45) - (heartBeat / 2), 32 + heartBeat, 32 + heartBeat)
+  surface.DrawTexturedRect(padding + 105 - (heartBeat / 2), ScrH() - (hudY + padding - 35) - (heartBeat / 2), 32 + heartBeat, 32 + heartBeat)
 
-  draw.DrawText(math.Round(rawHealth), "OswaldRP", padding + hudX - 10, ScrH() - (hudY + padding - 43), Color(255,255,255,255), TEXT_ALIGN_RIGHT)
+  draw.DrawText(math.Round(rawHealth), "OswaldRP", padding + hudX - 10, ScrH() - (hudY + padding - 37), Color(255,255,255,255), TEXT_ALIGN_RIGHT)
 
   --  armor Bar
   surface.SetDrawColor(0, 0, 0, 125)
-  surface.DrawRect(padding + 228, ScrH() - (hudY + padding - 97), hudX - 230 - 5, 28)
+  surface.DrawRect(padding + 123, ScrH() - (hudY + padding - 77), hudX - 123 - 5, 28)
 
   surface.SetDrawColor(0, 74, 148, 255)
-  surface.DrawRect(padding + 228, ScrH() - (hudY + padding - 98), (hudX - 230 - 5) * (math.Clamp(armor, 0, 100) / 100), 26)
+  surface.DrawRect(padding + 123, ScrH() - (hudY + padding - 78), (hudX - 123 - 5) * (math.Clamp(armor, 0, 100) / 100), 26)
 
   surface.SetMaterial(Icons['shield'])
   surface.SetDrawColor(0, 114, 188, 255)
-  surface.DrawTexturedRect(padding + 210, ScrH() - (hudY + padding - 95), 32, 32)
+  surface.DrawTexturedRect(padding + 105, ScrH() - (hudY + padding - 75), 32, 32)
 
-  draw.DrawText(armor, "OswaldRP", padding + hudX - 10, ScrH() - (hudY + padding - 93), Color(255,255,255,255), TEXT_ALIGN_RIGHT)
+  draw.DrawText(armor, "OswaldRP", padding + hudX - 10, ScrH() - (hudY + padding - 78), Color(255,255,255,255), TEXT_ALIGN_RIGHT)
 
   --  Wallet Amount
 
   if (wallet) then
+    draw.DrawText(currency .. format_num(wallet, 0), "OswaldRP", padding + 450, ScrH() - (hudY + padding - 155), Color(255,255,255,255), TEXT_ALIGN_RIGHT)  
+
     surface.SetMaterial(Icons['wallet'])
     surface.SetDrawColor(255, 255, 255, 200)
-    surface.DrawTexturedRect(padding + 210, ScrH() - (hudY + padding - 175), 32, 32)
-  
-    draw.DrawText(currency .. format_num(wallet, 0), "OswaldRP", padding + 250, ScrH() - (hudY + padding - 173), Color(255,255,255,255), TEXT_ALIGN_LEFT)  
+    surface.DrawTexturedRect(padding + 460, ScrH() - (hudY + padding - 150), 32, 32)
   end
   --  ATM Amount
-
-  surface.SetMaterial(Icons['credit-card'])
-  surface.SetDrawColor(255, 255, 255, 200)
-  surface.DrawTexturedRect(padding + 210, ScrH() - (hudY + padding - 135), 32, 32)
-
-  draw.DrawText(currency, "OswaldRP", padding + 250, ScrH() - (hudY + padding - 133), Color(255,255,255,255), TEXT_ALIGN_LEFT)
+  if (atmBalance) then
+    draw.DrawText(currency, "OswaldRP", padding + 450, ScrH() - (hudY + padding - 115), Color(255,255,255,255), TEXT_ALIGN_RIGHT)
+  end
+    surface.SetMaterial(Icons['credit-card'])
+    surface.SetDrawColor(255, 255, 255, 200)
+    surface.DrawTexturedRect(padding + 460, ScrH() - (hudY + padding - 110), 32, 32)
 
   -- Gun License
 
