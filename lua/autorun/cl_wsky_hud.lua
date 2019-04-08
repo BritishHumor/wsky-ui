@@ -1,6 +1,6 @@
---[[---------------------------------------------------------------------------
-Which default HUD elements should be hidden?
----------------------------------------------------------------------------]]
+
+
+include( "shared/math.lua" )
 
 local hideHUDElements = {
   ["DarkRP_HUD"] = false,
@@ -18,114 +18,11 @@ local hideHUDElements = {
   ["DarkRP_ArrestedHUD"] = true,
 }
 
-if SERVER then
-  AddCSLuaFile()
-  resource.AddFile("materials/antarcticIcons/credit-card.png")
-  resource.AddFile("materials/antarcticIcons/heart.png")
-  resource.AddFile("materials/antarcticIcons/heart-broken.png")
-  resource.AddFile("materials/antarcticIcons/shield.png")
-  resource.AddFile("materials/antarcticIcons/wallet.png")
-  resource.AddFile("materials/antarcticIcons/file-alt.png")
-  resource.AddFile("materials/antarcticIcons/handcuffs.png")
-
-  resource.AddFile("resources/fonts/OswaldBold.ttf")
-  resource.AddFile("resources/fonts/OswaldExtraLight.ttf")
-  resource.AddFile("resources/fonts/OswaldLight.ttf")
-  resource.AddFile("resources/fonts/OswaldMedium.ttf")
-  resource.AddFile("resources/fonts/OswaldRegular.ttf")
-  resource.AddFile("resources/fonts/OswaldSemiBold.ttf")
-
-  return
-end
-
--- this is the code that actually disables the drawing.
 hook.Add("HUDShouldDraw", "HideDefaultDarkRPHud", function(name)
   if hideHUDElements[name] then return false end
 end)
 
--- if true then return end -- REMOVE THIS LINE TO ENABLE THE CUSTOM HUD BELOW
-
---[[---------------------------------------------------------------------------
-The Custom HUD
-only draws health
----------------------------------------------------------------------------]]
 local Health = 0
-
-function draw.Circle( x, y, radius, seg )
-local cir = {}
-
-table.insert( cir, { x = x, y = y, u = 0.5, v = 0.5 } )
-for i = 0, seg do
-  local a = math.rad( ( i / seg ) * -360 )
-  table.insert( cir, { x = x + math.sin( a ) * radius, y = y + math.cos( a ) * radius, u = math.sin( a ) / 2 + 0.5, v = math.cos( a ) / 2 + 0.5 } )
-end
-
-local a = math.rad( 0 ) -- This is needed for non absolute segment counts
-table.insert( cir, { x = x + math.sin( a ) * radius, y = y + math.cos( a ) * radius, u = math.sin( a ) / 2 + 0.5, v = math.cos( a ) / 2 + 0.5 } )
-
-surface.DrawPoly( cir )
-end
-
-function comma_value(amount)
-  if (amount) then
-    local formatted = amount
-    while true do  
-      formatted, k = string.gsub(formatted, "^(-?%d+)(%d%d%d)", '%1,%2')
-      if (k==0) then
-        break
-      end
-    end
-    return formatted
-  end
-end
-
-function round(val, decimal)
-  if (val) then
-    if (decimal) then
-      return math.floor( (val * 10^decimal) + 0.5) / (10^decimal)
-    else
-      return math.floor(val+0.5)
-    end
-  end
-end
-
-function format_num(amount, decimal, prefix, neg_prefix)
-  if (amount) then
-    local str_amount,  formatted, famount, remain
-
-    decimal = decimal or 2  -- default 2 decimal places
-    neg_prefix = neg_prefix or "-" -- default negative sign
-  
-    famount = math.abs(round(amount,decimal))
-    famount = math.floor(famount)
-  
-    remain = round(math.abs(amount) - famount, decimal)
-  
-          -- comma to separate the thousands
-    formatted = comma_value(famount)
-  
-          -- attach the decimal portion
-    if (decimal > 0) then
-      remain = string.sub(tostring(remain),3)
-      formatted = formatted .. "." .. remain ..
-                  string.rep("0", decimal - string.len(remain))
-    end
-  
-          -- attach prefix string e.g '$' 
-    formatted = (prefix or "") .. formatted 
-  
-          -- if value is negative then format accordingly
-    if (amount<0) then
-      if (neg_prefix=="()") then
-        formatted = "("..formatted ..")"
-      else
-        formatted = neg_prefix .. formatted 
-      end
-    end
-  
-    return formatted
-  end
-end
 
 surface.CreateFont("OswaldRP", {
   font = "Oswald",
@@ -145,15 +42,13 @@ Icons['heart'] = Material("antarcticIcons/heart.png", "smooth")
 Icons['heart-broken'] = Material("antarcticIcons/heart-broken.png", "smooth")
 
 local health = 0
+local currency = "£"
+local padding = 5
+local hudX, hudY = 502, 192
 
 local function hudPaint()
-  local padding = 5
-  -- local hudX, hudY = (ScrW() * 0.3) - (padding * 2), (ScrH() * 0.20)
-  local hudX, hudY = 502, 192
 
   local player = LocalPlayer()
-
-  local currency = "£"
   local name = player:Name()
   local job = player:getDarkRPVar('job')
   local salary = player:getDarkRPVar('salary')
@@ -184,22 +79,60 @@ local function hudPaint()
   surface.SetDrawColor(50, 50, 50, 240)
   surface.DrawRect(padding, ScrH() - (hudY + padding), hudX, hudY)
 
-  if (!Avatar) then
-    Avatar = vgui.Create( "AvatarImage", Panel )
-    if (player:IsValid() && IsValid(Avatar)) then
-      Avatar:SetSize( 90, 90 )
-      Avatar:SetPos( padding + 5, ScrH() - hudY )
-      Avatar:SetPlayer( player, 90 )
-    end
-  end
+  -- if (!Avatar) then
+  --   Avatar = vgui.Create( "AvatarImage", Panel )
+  -- end
+  
+  -- if (player:IsValid() && IsValid(Avatar)) then
+  --   local avatarSize = 90
+  --   Avatar:SetSize(avatarSize, avatarSize )
+  --   Avatar:SetPos( padding + 5, ScrH() - hudY )
+  --   Avatar:SetPlayer( player, avatarSize )
+  -- end
+
+      if (!BGPanel) then
+        BGPanel = vgui.Create( "DPanel" )
+        BGPanel:SetPos( padding + 5, ScrH() - hudY )
+        BGPanel:SetSize( 90, 90 )
+        BGPanel:SetBackgroundColor( Color( 0, 0, 0, 125 ) )
+      end
+      
+        if (!mdl) then
+          mdl = vgui.Create( "DModelPanel", BGPanel )
+          mdl:SetSize( BGPanel:GetSize() )
+          mdl:SetAnimated(true)
+        end
+
+        local currentModel = LocalPlayer():GetModel()
+
+        if (mdl:GetModel() != currentModel) then
+          mdl:SetModel( currentModel )
+        end
+        
+        local currentSequence = LocalPlayer():GetSequence()
+
+        function mdl:LayoutEntity( ent )
+          ent:ResetSequence(currentSequence)
+          mdl:RunAnimation()
+        end
+        
+        local eyepos = mdl.Entity:GetBonePosition( mdl.Entity:LookupBone( "ValveBiped.Bip01_Head1" ) )
+        
+        eyepos:Add( Vector( -2, 1, -2 ) )
+        
+        mdl:SetLookAt( eyepos )
+        
+        mdl:SetCamPos( eyepos-Vector( -15, 0, 0 ) )
+        
+        mdl.Entity:SetEyeTarget( eyepos-Vector( -30, 0, 0 ) )
 
   surface.SetDrawColor(255, 255, 255, 25)
-  -- surface.SetDrawColor(88, 40, 238, 125)
+
   surface.DrawRect(padding, ScrH() - hudY - 5, 100, 100)
 
   surface.DrawRect(padding + 100, ScrH() - (hudY + padding), hudX - 100, 30)
 
-  draw.DrawText(name, "OswaldRP", padding + 105, ScrH() - (hudY + padding) + 2, Color(255, 255, 255, 255), 0)
+  draw.DrawText(name .. " " .. LocalPlayer():GetSequence(), "OswaldRP", padding + 105, ScrH() - (hudY + padding) + 2, Color(255, 255, 255, 255), 0)
 
   if (job) then
     draw.DrawText(job:upper(), "OswaldRP", padding + 45.5 + 5, ScrH() - (hudY + padding - 115), Color(255,255,255,255), 1)
