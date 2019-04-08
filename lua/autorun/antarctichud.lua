@@ -26,6 +26,7 @@ if SERVER then
   resource.AddFile("materials/antarcticIcons/shield.png")
   resource.AddFile("materials/antarcticIcons/wallet.png")
   resource.AddFile("materials/antarcticIcons/file-alt.png")
+  resource.AddFile("materials/antarcticIcons/handcuffs.png")
 
   resource.AddFile("resources/fonts/OswaldBold.ttf")
   resource.AddFile("resources/fonts/OswaldExtraLight.ttf")
@@ -135,7 +136,9 @@ Icons = {}
 
 Icons['wallet'] = Material("antarcticIcons/wallet.png", "smooth")
 Icons['credit-card'] = Material("antarcticIcons/credit-card.png", "smooth")
+
 Icons['gun-license'] = Material("antarcticIcons/file-alt.png", "smooth")
+Icons['handcuffs'] = Material("antarcticIcons/handcuffs.png", "smooth")
 
 Icons['shield'] = Material("antarcticIcons/shield.png", "smooth")
 Icons['heart'] = Material("antarcticIcons/heart.png", "smooth")
@@ -157,6 +160,7 @@ local function hudPaint()
   local wallet = player:getDarkRPVar('money')
 
   local hasLicense = player:getDarkRPVar('HasGunlicense')
+  local arrested = player:getDarkRPVar('Arrested')
 
   local rawHealth  = player:Health()
   health = math.min(100, (health == player:Health() and health) or Lerp(0.1, health, player:Health()))
@@ -180,7 +184,6 @@ local function hudPaint()
   surface.SetDrawColor(50, 50, 50, 240)
   surface.DrawRect(padding, ScrH() - (hudY + padding), hudX, hudY)
 
-
   if (!Avatar) then
     Avatar = vgui.Create( "AvatarImage", Panel )
     if (player:IsValid() && IsValid(Avatar)) then
@@ -189,7 +192,6 @@ local function hudPaint()
       Avatar:SetPlayer( player, 90 )
     end
   end
-
 
   surface.SetDrawColor(255, 255, 255, 25)
   -- surface.SetDrawColor(88, 40, 238, 125)
@@ -243,7 +245,7 @@ local function hudPaint()
   end
   --  ATM Amount
   if (atmBalance) then
-    draw.DrawText(currency, "OswaldRP", padding + 450, ScrH() - (hudY + padding - 115), Color(255,255,255,255), TEXT_ALIGN_RIGHT)
+    draw.DrawText(currency .. atmBalance, "OswaldRP", padding + 450, ScrH() - (hudY + padding - 115), Color(255,255,255,255), TEXT_ALIGN_RIGHT)
   end
     surface.SetMaterial(Icons['credit-card'])
     surface.SetDrawColor(255, 255, 255, 200)
@@ -258,6 +260,16 @@ local function hudPaint()
     surface.SetDrawColor(0, 0, 0, 125)
   end
   surface.DrawTexturedRect(padding + 105, ScrH() - (hudY + padding - 115), 32, 32)
+
+  -- Arrested
+
+  surface.SetMaterial(Icons['handcuffs'])
+  if (arrested) then
+    surface.SetDrawColor(153, 243, 255, 200)
+  else
+    surface.SetDrawColor(0, 0, 0, 125)
+  end
+  surface.DrawTexturedRect(padding + 150, ScrH() - (hudY + padding - 115), 32, 32)
 
 end
 
