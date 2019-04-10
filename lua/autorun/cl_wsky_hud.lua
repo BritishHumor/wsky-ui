@@ -45,6 +45,7 @@ local health = 0
 local currency = "£"
 local padding = 5
 local hudX, hudY = 502, 192
+local currentSequence = 0
 
 local function hudPaint()
 
@@ -107,22 +108,43 @@ local function hudPaint()
 
         if (mdl:GetModel() != currentModel) then
           mdl:SetModel( currentModel )
-        end
-        
-        local currentSequence = LocalPlayer():GetSequence()
-
-        function mdl:LayoutEntity( ent )
-          ent:ResetSequence(currentSequence)
-          mdl:RunAnimation()
+          function mdl:LayoutEntity( ent )
+            if (currentSequence == 0) then
+              animations = ent:GetSequenceList()
+              for index, value in ipairs(animations) do
+                if (currentSequence == 0) then
+                  if (string.find(value, "gman")) then
+                    currentSequence = index
+                    print("current Sequence set to " .. index)
+                  end
+                end
+              end
+              if (currentSequence == 0) then
+                for index, value in ipairs(animations) do
+                  if (currentSequence == 0) then
+                    if (string.find(value, "idle")) then
+                      currentSequence = index
+                      print("current Sequence set to " .. index)
+                    end
+                  end
+                end
+              end
+            end
+            if (ent:GetSequence() != currentSequence) then
+              ent:ResetSequence( currentSequence )
+              print("changing animation to sequence: " .. currentSequence)
+              mdl:RunAnimation()
+            end
+          end
         end
         
         local eyepos = mdl.Entity:GetBonePosition( mdl.Entity:LookupBone( "ValveBiped.Bip01_Head1" ) )
         
-        eyepos:Add( Vector( -2, 1, -2 ) )
+        eyepos:Add( Vector( -20, 0, -1 ) )
         
         mdl:SetLookAt( eyepos )
         
-        mdl:SetCamPos( eyepos-Vector( -15, 0, 0 ) )
+        mdl:SetCamPos( eyepos-Vector( -35, 0, 0 ) )
         
         mdl.Entity:SetEyeTarget( eyepos-Vector( -30, 0, 0 ) )
 
@@ -132,7 +154,7 @@ local function hudPaint()
 
   surface.DrawRect(padding + 100, ScrH() - (hudY + padding), hudX - 100, 30)
 
-  draw.DrawText(name .. " " .. LocalPlayer():GetSequence(), "OswaldRP", padding + 105, ScrH() - (hudY + padding) + 2, Color(255, 255, 255, 255), 0)
+  draw.DrawText(name, "OswaldRP", padding + 105, ScrH() - (hudY + padding) + 2, Color(255, 255, 255, 255), 0)
 
   if (job) then
     draw.DrawText(job:upper(), "OswaldRP", padding + 45.5 + 5, ScrH() - (hudY + padding - 115), Color(255,255,255,255), 1)
